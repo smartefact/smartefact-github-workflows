@@ -2,7 +2,7 @@
 
 Reusable GitHub workflows for Smartefact projects.
 
-[![GitHub Issues](https://img.shields.io/github/issues/smartefact/smartefact-github-workflows)](https://github.com/smartefact/smartefact-github-workflows/issues)
+[![GitHub Issues](https://img.shields.io/github/issues/smartefact/smartefact-github-workflows?logo=github)](https://github.com/smartefact/smartefact-github-workflows/issues)
 [![Unlicense](https://img.shields.io/badge/license-Unlicense-green)](https://unlicense.org/)
 [![Common Changelog](https://common-changelog.org/badge.svg)](https://common-changelog.org)
 
