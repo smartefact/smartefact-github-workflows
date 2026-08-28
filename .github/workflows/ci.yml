@@ -14,8 +14,8 @@ on:
 
 jobs:
 
-  check:
-    name: Gradle check
+  build:
+    name: Build
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -46,5 +46,5 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
           add-job-summary: always
           build-scan-publish: false
-      - name: Gradle check
-        run: ./gradlew check
+      - name: Build
+        run: ./gradlew build
