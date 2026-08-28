@@ -1,0 +1,50 @@
+# Smartefact reusable GitHub workflow - CI
+
+name: CI
+
+on:
+
+  workflow_call:
+    inputs:
+      java-version:
+        type: number
+        description: Java version
+        required: false
+        default: 21
+
+jobs:
+
+  check:
+    name: Gradle check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout sources
+        id: checkout
+        uses: actions/checkout@v7
+        # Reference: https://github.com/actions/checkout
+        with:
+          submodules: recursive
+      - name: Setup Java
+        id: setup-java
+        uses: actions/setup-java@v6
+        # Reference: https://github.com/actions/setup-java
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+          cache-jdk: true
+          # NOTE: `cache: gradle` is not used, as the Gradle cache is managed by the `setup-gradle` action
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - name: Setup Gradle
+        id: setup-gradle
+        uses: gradle/actions/setup-gradle@v6
+        # Reference: https://github.com/gradle/actions/blob/main/docs/setup-gradle.md
+        with:
+          validate-wrappers: true
+          cache-provider: basic
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          add-job-summary: always
+          build-scan-publish: false
+      - name: Gradle check
+        run: ./gradlew check
