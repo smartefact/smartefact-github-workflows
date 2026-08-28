@@ -1,0 +1,51 @@
+# Smartefact reusable GitHub workflow - Gradle plugin - Release
+
+name: Gradle plugin - Release
+
+on:
+
+  workflow_call:
+    secrets:
+      gradle-publish-key:
+        description: Gradle publish key
+        required: true
+      gradle-publish-secret:
+        description: Gradle publish secret
+        required: true
+
+jobs:
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout sources
+        id: checkout
+        uses: actions/checkout@v7
+        # Reference: https://github.com/actions/checkout
+        with:
+          submodules: recursive
+      - name: Setup Java
+        id: setup-java
+        uses: actions/setup-java@v6
+        # Reference: https://github.com/actions/setup-java
+        with:
+          distribution: temurin
+          java-version: 21
+          cache-jdk: true
+          # NOTE: `cache: gradle` is not used, as the Gradle cache is managed by the `setup-gradle` action
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - name: Setup Gradle
+        id: setup-gradle
+        uses: gradle/actions/setup-gradle@v6
+        # Reference: https://github.com/gradle/actions/blob/main/docs/setup-gradle.md
+        with:
+          validate-wrappers: true
+          cache-provider: basic
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          add-job-summary: always
+          build-scan-publish: false
+      - name: Gradle publish
+        run: ./gradlew publishPlugins -Pgradle.publish.key=${{ secrets.gradle-publish-key }} -Pgradle.publish.secret=${{ secrets.gradle-publish-secret }}
