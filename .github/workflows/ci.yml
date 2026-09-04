@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      checks: write
     steps:
       - name: Checkout sources
         id: checkout
@@ -48,3 +49,22 @@ jobs:
           build-scan-publish: false
       - name: Build
         run: ./gradlew build
+      - name: Publish unit test reports
+        if: always()
+        uses: mikepenz/action-junit-report@v6
+        # Reference: https://github.com/marketplace/actions/junit-report-action
+        with:
+          check_name: 'Unit Test Report'
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          detailed_summary: true
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        # Reference: https://github.com/actions/upload-artifact
+        with:
+          name: Test reports
+          path: |
+            **/build/test-results/*/TEST-*.xml
+            **/build/reports/tests
+          compression-level: 9
+          retention-days: 30
